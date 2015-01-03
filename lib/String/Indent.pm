@@ -48,15 +48,6 @@ or more whitespaces).
 =back
 
 
-=head1 TODO
-
-Option 'first_line_indent'.
-
-'dedent' function.
-
-Option to trim blank lines.
-
-
 =head1 SEE ALSO
 
 L<Indent::String>, L<String::Nudge>
