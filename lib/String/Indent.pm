@@ -17,11 +17,13 @@ sub indent {
     my ($indent, $str, $opts) = @_;
     $opts //= {};
 
-    if ($opts->{indent_blank_lines} // 1) {
-        $str =~ s/^/$indent/mg;
-    } else {
-        $str =~ s/^([^\r\n]*\S[^\r\n]*)/$indent$1/mg;
-    }
+    my $ibl = $opts->{indent_blank_lines} // 1;
+    my $fli = $opts->{first_line_indent} // $indent;
+    my $sli = $opts->{subsequent_lines_indent} // $indent;
+    #say "D:ibl=<$ibl>, fli=<$fli>, sli=<$sli>";
+
+    my $i = 0;
+    $str =~ s/^([^\r\n]?)/$i++; !$ibl && !$1 ? "$1" : $i==1 ? "$fli$1" : "$sli$1"/egm;
     $str;
 }
 
@@ -40,10 +42,19 @@ Indent every line in $str with $indent. Example:
 
 =over 4
 
-=item * indent_blank_lines => BOOL (default 1)
+=item * indent_blank_lines => bool (default: 1)
 
 If set to false, does not indent blank lines (i.e., lines containing only zero
 or more whitespaces).
+
+=item * first_line_indent => str
+
+If set, then the first line will be set to this instead of the normal indent.
+
+=item * subsequent_lines_indent => str
+
+If set, then all lines but the first line will be set to this instead of the
+normal indent.
 
 =back
 
