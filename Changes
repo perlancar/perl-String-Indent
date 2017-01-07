@@ -1,5 +1,3 @@
-Revision history for String-Indent
-
 0.03    2015-03-06 (PERLANCAR)
 
 	- Add options: first_line_indent, subsequent_lines_indent.
