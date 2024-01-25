@@ -1,14 +1,15 @@
 package String::Indent;
 
-# DATE
-# VERSION
-
 use 5.010001;
 use strict;
 use warnings;
 
-use Exporter;
-our @ISA = qw(Exporter);
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
+
+use Exporter qw(import);
 our @EXPORT_OK = qw(
                        indent
                );
@@ -17,13 +18,15 @@ sub indent {
     my ($indent, $str, $opts) = @_;
     $opts //= {};
 
-    my $ibl = $opts->{indent_blank_lines} // 1;
-    my $fli = $opts->{first_line_indent} // $indent;
-    my $sli = $opts->{subsequent_lines_indent} // $indent;
-    #say "D:ibl=<$ibl>, fli=<$fli>, sli=<$sli>";
+    my $ibl   = $opts->{indent_blank_lines} // 1;
+    my $fli   = $opts->{first_line_indent} // $indent;
+    my $sli   = $opts->{subsequent_lines_indent} // $indent;
+    my $flopi = $opts->{first_line_of_para_indent} // $sli // $indent;
+    #say "D:ibl=<$ibl>, fli=<$fli>, flopi=<$flopi>, sli=<$sli>";
 
     my $i = 0;
-    $str =~ s/^([^\r\n]?)/$i++; !$ibl && !$1 ? "$1" : $i==1 ? "$fli$1" : "$sli$1"/egm;
+    my $prev_blank;
+    $str =~ s/^([^\r\n]?)/$i++; my $blank = !$1; my $start_para = $i==1 || $prev_blank; $prev_blank = $blank; !$ibl && $blank ? "$1" : $i==1 ? "$fli$1" : $start_para ? "$flopi$1" : "$sli$1"/egm;
     $str;
 }
 
@@ -51,6 +54,11 @@ or more whitespaces).
 
 If set, then the first line will be set to this instead of the normal indent.
 
+=item * first_line_of_para_indent => str
+
+If set, then the first line of each paragraph will be set to this instead of the
+normal indent.
+
 =item * subsequent_lines_indent => str
 
 If set, then all lines but the first line will be set to this instead of the
@@ -61,6 +69,6 @@ normal indent.
 
 =head1 SEE ALSO
 
-L<Indent::String>, L<String::Nudge>
+L<Indent::String>, L<String::Nudge>, L<Text::Indent>
 
 =cut
